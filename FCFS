@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="it"> <!-- Imposta la lingua del documento -->
+<head>
+    <meta charset="UTF-8"> <!-- Codifica caratteri UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Rende la pagina responsive -->
+    <title>Statistiche - Calcoli</title> <!-- Titolo della pagina -->
+    <style>
+        /* Stile generale della pagina */
+        body {
+            font-family: 'Arial', sans-serif; /* Font principale */
+            background-color: #f4f7f6; /* Sfondo chiaro */
+            color: #333; /* Testo scuro */
+            text-align: center; /* Allineamento al centro */
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            background-color: #333; /* Sfondo scuro per il titolo */
+            color: white; /* Testo bianco */
+            padding: 20px 0; /* Spaziatura interna */
+            margin: 0;
+        }
+        .container {
+            width: 80%; /* Larghezza contenitore */
+            margin: 20px auto; /* Margine automatico per centrare */
+        }
+        .stats {
+            background-color: #fff; /* Sfondo bianco */
+            padding: 20px; /* Spaziatura interna */
+            border-radius: 8px; /* Angoli arrotondati */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombreggiatura */
+            margin-bottom: 40px;
+        }
+        .stat {
+            font-size: 18px; /* Dimensione del testo */
+            margin: 15px 0;
+            color: #444; /* Colore del testo */
+        }
+        .stat strong {
+            font-weight: bold; /* Testo in grassetto */
+            color: #007BFF; /* Testo blu */
+        }
+        footer {
+            background-color: #333; /* Sfondo scuro */
+            color: white; /* Testo bianco */
+            padding: 10px 0; /* Spaziatura interna */
+            margin-top: 40px;
+        }
+        .input-group {
+            margin-bottom: 20px; /* Spaziatura sotto il gruppo input */
+        }
+        .input-group input {
+            padding: 10px; /* Spaziatura interna */
+            font-size: 16px; /* Dimensione testo */
+            width: 200px; /* Larghezza input */
+            margin-right: 10px; /* Spaziatura a destra */
+        }
+        .input-group button {
+            padding: 10px; /* Spaziatura interna */
+            font-size: 16px; /* Dimensione testo */
+            cursor: pointer; /* Puntatore per interazione */
+            background-color: #007BFF; /* Sfondo blu */
+            color: white; /* Testo bianco */
+            border: none; /* Rimuove il bordo */
+            border-radius: 5px; /* Angoli arrotondati */
+        }
+        .array-display {
+            margin-top: 20px; /* Spaziatura sopra */
+            font-size: 18px; /* Dimensione testo */
+        }
+        .array-display select {
+            font-size: 16px; /* Dimensione testo */
+            padding: 10px; /* Spaziatura interna */
+            width: 200px; /* Larghezza */
+            margin-right: 10px; /* Spaziatura a destra */
+        }
+    </style>
+</head>
+<body>
+    <h1>Calcoli Statistici dell'Array</h1> <!-- Titolo della pagina -->
+    <div class="container">
+        <div class="stats"> <!-- Sezione per visualizzare le statistiche -->
+            <div class="stat"><strong>Media:</strong> <span id="mean"></span></div> <!-- Media -->
+            <div class="stat"><strong>Varianza:</strong> <span id="variance"></span></div> <!-- Varianza -->
+            <div class="stat"><strong>Deviazione Standard:</strong> <span id="stdDev"></span></div> <!-- Deviazione standard -->
+            <div class="stat"><strong>Mediana:</strong> <span id="median"></span></div> <!-- Mediana -->
+            <div class="stat"><strong>Moda:</strong> <span id="mode"></span></div> <!-- Moda -->
+        </div>
+        <div class="input-group"> <!-- Sezione per aggiungere valori -->
+            <input type="number" id="inputValue" placeholder="Inserisci valore"> <!-- Campo input -->
+            <button onclick="addValue()">Aggiungi</button> <!-- Bottone per aggiungere -->
+        </div>
+        <div class="array-display"> <!-- Sezione per visualizzare e modificare l'array -->
+            <h3>Array Attuale:</h3>
+            <p id="arrayContent"></p> <!-- Visualizzazione array -->
+            <select id="removeValueSelect">
+                <option value="">Seleziona valore da rimuovere</option> <!-- Menu per rimuovere valori -->
+            </select>
+            <button onclick="removeSelectedValue()">Rimuovi</button> <!-- Bottone per rimuovere -->
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Calcoli Statistici</p> <!-- Footer -->
+    </footer>
+    <script>
+        let t = [3, 4, 2, 5, 1, 6, 4, 2, 7]; // Array iniziale con valori
+
+        // Classe per calcolare statistiche
+        class Statistics {
+            static mean(array) {
+                const sum = array.reduce((acc, num) => acc + num, 0); // Somma degli elementi
+                return sum / array.length; // Media
+            }
+            static variance(array) {
+                const mean = this.mean(array); // Calcola la media
+                const squaredDiffs = array.map(num => Math.pow(num - mean, 2)); // Differenze al quadrato
+                return this.mean(squaredDiffs); // Media delle differenze quadrate
+            }
+            static standardDeviation(array) {
+                const variance = this.variance(array); // Calcola la varianza
+                return Math.sqrt(variance); // Radice quadrata della varianza
+            }
+            static median(array) {
+                const sorted = [...array].sort((a, b) => a - b); // Ordina l'array
+                const mid = Math.floor(sorted.length / 2); // Indice centrale
+                return sorted.length % 2 === 0
+                    ? (sorted[mid - 1] + sorted[mid]) / 2 // Media dei due centrali se pari
+                    : sorted[mid]; // Valore centrale se dispari
+            }
+            static mode(array) {
+                const frequencyMap = {}; // Mappa per frequenze
+                array.forEach(num => frequencyMap[num] = (frequencyMap[num] || 0) + 1); // Conta frequenze
+                const maxFrequency = Math.max(...Object.values(frequencyMap)); // Frequenza massima
+                return Object.keys(frequencyMap)
+                    .filter(key => frequencyMap[key] === maxFrequency) // Filtra modali
+                    .map(Number); // Converte in numeri
+            }
+        }
+
+        function addValue() {
+            const value = parseFloat(document.getElementById('inputValue').value); // Legge valore input
+            if (!isNaN(value)) { // Se è valido
+                t.push(value); // Aggiunge valore all'array
+                updateStats(); // Aggiorna statistiche
+                document.getElementById('inputValue').value = ''; // Reset campo
+            }
+        }
+
+        function removeSelectedValue() {
+            const valueToRemove = parseFloat(document.getElementById('removeValueSelect').value); // Valore da rimuovere
+            if (valueToRemove) {
+                const index = t.indexOf(valueToRemove); // Trova l'indice
+                if (index > -1) {
+                    t.splice(index, 1); // Rimuove dall'array
+                    updateStats(); // Aggiorna statistiche
+                }
+            }
+        }
+
+        function updateStats() {
+            const mean = Statistics.mean(t); // Media
+            const variance = Statistics.variance(t); // Varianza
+            const stdDev = Statistics.standardDeviation(t); // Deviazione standard
+            const median = Statistics.median(t); // Mediana
+            const mode = Statistics.mode(t); // Moda
+
+            document.getElementById("mean").textContent = mean.toFixed(2); // Mostra media
+            document.getElementById("variance").textContent = variance.toFixed(2); // Mostra varianza
+            document.getElementById("stdDev").textContent = stdDev.toFixed(2); // Mostra deviazione
+            document.getElementById("median").textContent = median; // Mostra mediana
+            document.getElementById("mode").textContent = mode.join(", "); // Mostra moda
+
+            updateArrayDisplay(); // Aggiorna visualizzazione array
+        }
+
+        function updateArrayDisplay() {
+            const arrayContent = document.getElementById("arrayContent");
+            arrayContent.textContent = `Array: [${t.join(", ")}]`; // Mostra array aggiornato
+
+            const removeValueSelect = document.getElementById("removeValueSelect");
+            removeValueSelect.innerHTML = '<option value="">Seleziona valore da rimuovere</option>'; // Reset menu
+            t.forEach(value => {
+                const option = document.createElement("option"); // Crea opzione
+                option.value = value;
+                option.textContent = value;
+                removeValueSelect.appendChild(option); // Aggiunge opzione al menu
+            });
+        }
+
+        updateStats(); // Aggiorna i dati iniziali
+    </script>
+</body>
+</html>
