@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lottery Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .button {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .selected {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lottery Simulation</h1>
+    <div>
+        <button id="pari" class="button">Pari</button>
+        <button id="dispari" class="button">Dispari</button>
+        <label for="decina">Decina:</label>
+        <select id="decina">
+            <option value="">--Select--</option>
+            <option value="1">1-10</option>
+            <option value="2">11-20</option>
+            <option value="3">21-30</option>
+            <option value="4">31-40</option>
+            <option value="5">41-50</option>
+            <option value="6">51-60</option>
+            <option value="7">61-70</option>
+            <option value="8">71-80</option>
+            <option value="9">81-90</option>
+        </select>
+        <label for="puntata">Puntata Fissa:</label>
+        <input type="number" id="puntata" min="1" max="100" value="10">
+    </div>
+    <div>
+        <button id="start" class="button">Inizia Estrazioni</button>
+        <button id="stop" class="button">Ferma Estrazioni</button>
+    </div>
+    <script>
+        let pariSelected = false;
+        let dispariSelected = false;
+        let extractions = [];
+        let extractionInterval;
+
+        document.getElementById('pari').addEventListener('click', function() {
+            pariSelected = !pariSelected;
+            this.classList.toggle('selected');
+        });
+
+        document.getElementById('dispari').addEventListener('click', function() {
+            dispariSelected = !dispariSelected;
+            this.classList.toggle('selected');
+        });
+
+        document.getElementById('start').addEventListener('click', function() {
+            if (!extractionInterval) {
+                extractionInterval = setInterval(() => {
+                    const number = Math.floor(Math.random() * 90) + 1;
+                    extractions.push(number);
+                    console.log(`Estratto: ${number}`);
+                }, 2000);
+            }
+        });
+
+        document.getElementById('stop').addEventListener('click', function() {
+            clearInterval(extractionInterval);
+            extractionInterval = null;
+            console.log('Estrazioni fermate.');
+            console.log('Tutte le estrazioni:', extractions);
+        });
+    </script>
+</body>
+</html>
